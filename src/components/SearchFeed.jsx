@@ -19,7 +19,10 @@ const SearchFeed = () => {
   return (
     <Box
       p={2}
-      ml="90px"
+      ml={
+        { xs: '1px', md: '90px' }
+
+      }
       sx={{
         overflowY: 'auto', //nếu nội dung hiển thị bị vượt quá màn hiện tại thì hiển thị scroll
         height: '90vh',
