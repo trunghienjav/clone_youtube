@@ -12,7 +12,7 @@ const VideoCard = ({ videos: { id: { videoId }, snippet } }) => {
             sx={{
                 width: {
                     xs: '356px', //xs: extra small devices
-                    sm: '358px',
+                    sm: '338px',
                     md: '320px', // medium devices
                 },
                 boxShadow: 'none',
@@ -28,7 +28,7 @@ const VideoCard = ({ videos: { id: { videoId }, snippet } }) => {
                     sx={{
                         width: {
                             xs: '356px', //xs: extra small devices
-                            sm: '358px',
+                            sm: '338px',
                             md: '320px',
                         },
                         height: 180
