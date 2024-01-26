@@ -6,23 +6,47 @@ import { CheckCircle } from '@mui/icons-material'
 
 import { Videos } from './'
 import { fetchFromAPI } from '../utils/fetchFromAPI'
+import VideoComment from './VideoComment'
+import { formatDate } from '../Helper/dateHelper'
 
 const VideoDetail = () => {
 
   const [videoDetail, setvideoDetail] = useState(null)
   const [videos, setVideos] = useState(null)
+  const [videoComments, setVideoComments] = useState([])
   const { id } = useParams()
-
 
   useEffect(() => {
     fetchFromAPI(`videos?part=snippet,statistics&id=${id}`)
       .then((data) => {
-        console.log(data);
+        // console.log(data);
         setvideoDetail(data.items[0])
       })
     fetchFromAPI(`search?part=snippet&relatedToVideoId=${id}&type=video`)
       .then((data) => {
         setVideos(data.items)
+      })
+    fetchFromAPI(`commentThreads?part=snippet&videoId=${id}&maxResults=10`)
+      .then((data) => {
+
+        if(data.items){
+          console.log(data.items);
+          if(data.items.length > 10){
+            // console.log("Trên 10 comment nên cắt");
+            setVideoComments(data.items.slice(0, 10))
+          }else{
+            // console.log("Dưới 10 cmnt");
+            setVideoComments(data.items)
+          }
+
+        }else{
+          console.log("No comments");
+          // setVideoComments("No comments")
+        }
+
+      })
+      .catch((err) => {
+        setVideoComments(err.message)
       })
   }, [id])
 
@@ -32,14 +56,7 @@ const VideoDetail = () => {
     statistics: { viewCount, likeCount }
   } = videoDetail
 
-  var dateObject = new Date(publishedAt);
-  // Lấy ngày, tháng và năm từ đối tượng Date
-  var year = dateObject.getFullYear();
-  var month = String(dateObject.getMonth() + 1).padStart(2, '0'); // Tháng bắt đầu từ 0
-  var day = String(dateObject.getDate()).padStart(2, '0');
-
-  // Tạo chuỗi ngày mới trong định dạng "YYYY-MM-DD"
-  var formattedDate = year + '-' + month + '-' + day;
+  const formattedDate = formatDate(publishedAt);// sử dụng helpers
 
   return (
     <Box minHeight="95vh">
@@ -50,7 +67,7 @@ const VideoDetail = () => {
         <Box flex={1}>
           <Box sx={{
             width: '100%',
-            position: 'sticky',
+            position: '',
             top: '86px'
           }}>
             <ReactPlayer
@@ -124,6 +141,15 @@ const VideoDetail = () => {
                 </Typography>
               </Stack>
             </Stack>
+            {
+              videoComments.map((comment, index) => {
+                return (
+                  <Box key={index}>
+                    <VideoComment videoComments={comment} />
+                  </Box>
+                )
+              })
+            }
           </Box>
         </Box>
         <Box
